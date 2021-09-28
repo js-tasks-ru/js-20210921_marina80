@@ -6,4 +6,12 @@
  */
 export const pick = (obj, ...fields) => {
 
+  let objNew = [];
+
+  for (let item of Object.entries(obj)) {
+    if (fields.includes(item[0])) {
+      objNew.push([item[0], item[1]]);
+    }
+  }
+  return Object.fromEntries(objNew);
 };
