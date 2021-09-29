@@ -5,4 +5,19 @@
  */
 export function uniq(arr) {
 
+  const arrUniq = [];
+  const arrCopy = (arr !== undefined) ? [...arr] : [];
+
+  arrCopy.forEach((item) => {
+
+    let search = arrUniq.find(el => el === item);
+
+    if (search === undefined) {
+      arrUniq.push(item);
+    }
+
+  });
+
+  return arrUniq;
+
 }
