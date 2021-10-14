@@ -1,44 +1,46 @@
 class Tooltip {
-
   static activeTooltip;
 
   constructor() {
-    this.initialize();
+    if (Tooltip.activeTooltip) {
+      return Tooltip.activeTooltip;
+    }
+    Tooltip.activeTooltip = this;
   }
 
   initialize() {
-    const wrapper = document.createElement('div');
-    wrapper.innerHTML = '<div class="tooltip"></div>';
-    const element = wrapper.firstElementChild;
-    this.element = element;
-
     document.addEventListener('pointerover', this.pointerover);
     document.addEventListener('pointerout', this.pointerout);
   }
 
   pointerover = (event) => {
-    if (event.target.dataset.tooltip != undefined) {
-      let message = event.target.getAttribute('data-tooltip');
-      this.element.style.top = event.y + 'px';
-      this.element.style.left = event.x + 'px';
-      this.render(message);
+    if (event.target.dataset.tooltip) {
+      document.addEventListener('pointermove', this.pointermove);
+      const block = event.target.closest('[data-tooltip]');
+      const text = block.dataset.tooltip;
+      this.render(text);
     }
+  }
+
+  pointermove = (event) => {
+    const gap = 10;
+    this.element.style.top = event.y + gap + 'px';
+    this.element.style.left = event.x + gap + 'px';
   }
 
   pointerout = (event) => {
-    if (event.target.dataset.tooltip != undefined) {
-      this.destroy();
-    }
+    this.remove();
+    document.removeEventListener('pointermove', this.onpointermove);
+
   }
 
-  render(message) {
-    if (!Tooltip.activeTooltip) {
-      Tooltip.activeTooltip = this;
-      //let tooltip = new Tooltip();
-      this.initialize();
-      this.element.append(message);
-      document.body.append(this.element);
-    }
+  render(text) {
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = '<div class="tooltip"></div>';
+    const element = wrapper.firstElementChild;
+    this.element = element;
+    this.element.append(text);
+    document.body.append(this.element);
   }
 
   remove() {
@@ -48,9 +50,10 @@ class Tooltip {
   }
 
   destroy() {
+    document.removeEventListener('pointerover', this.pointerover);
+    document.removeEventListener('pointerout', this.pointerout);
     this.remove();
     this.element = null;
-    Tooltip.activeTooltip = null;
   }
 }
 
