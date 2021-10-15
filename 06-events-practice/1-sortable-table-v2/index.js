@@ -79,24 +79,17 @@ export default class SortableTable {
 
     this.subElements = this.getSubElements(element);
 
-    const _this = this;
-
     this.sort(this.sorted.id, this.sorted.order);
 
-    const title = this.element.querySelector('[data-sortable="true"]');
+    this.subElements.header.addEventListener('pointerdown', (event) => {
 
-    this.element.querySelector('[data-element="header"]').addEventListener('click', () => {
+      const column = event.target.closest('.sortable-table__cell');
 
-      if (event.target.closest('.sortable-table__cell').getAttribute('data-sortable') == 'true') {
-        const field = event.target.closest('.sortable-table__cell').getAttribute('data-id');
-        const dataOrder = event.target.closest('.sortable-table__cell').getAttribute('data-order');
+      if (column.getAttribute('data-sortable') === 'true') {
+        const field = column.getAttribute('data-id');
+        const dataOrder = column.getAttribute('data-order');
         let order = 'asc';
-        if (dataOrder == '' || dataOrder == 'desc') {
-          order = 'asc';
-        }
-        else {
-          order = 'desc';
-        }
+        dataOrder === 'desc' ? order = 'asc' : order = 'desc';
         this.sort(field, order);
       }
 
