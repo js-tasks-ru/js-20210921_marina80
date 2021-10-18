@@ -223,16 +223,13 @@ export default class SortableTable {
   }
 
   getSubElements(element) {
-    const result = {};
     const elements = element.querySelectorAll('[data-element]');
 
-    for (const subElement of elements) {
-      const name = subElement.dataset.element;
+    return [...elements].reduce((accum, subElement) => {
+      accum[subElement.dataset.element] = subElement;
 
-      result[name] = subElement;
-    }
-
-    return result;
+      return accum;
+    }, {});
   }
 
   sort (field, order) {
