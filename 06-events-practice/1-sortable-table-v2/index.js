@@ -78,25 +78,17 @@ export default class SortableTable {
     this.element = element;
 
     this.subElements = this.getSubElements(element);
-
-    const _this = this;
-
     this.sort(this.sorted.id, this.sorted.order);
+    this.subElements.header.addEventListener('pointerdown', (event) => {
 
-    const title = this.element.querySelector('[data-sortable="true"]');
+      const column = event.target.closest('.sortable-table__cell');
 
-    this.element.querySelector('[data-element="header"]').addEventListener('click', () => {
-
-      if (event.target.closest('.sortable-table__cell').getAttribute('data-sortable') == 'true') {
-        const field = event.target.closest('.sortable-table__cell').getAttribute('data-id');
-        const dataOrder = event.target.closest('.sortable-table__cell').getAttribute('data-order');
+      if (column.getAttribute('data-sortable') === 'true') {
+        const field = column.getAttribute('data-id');
+        const dataOrder = column.getAttribute('data-order');
         let order = 'asc';
-        if (dataOrder == '' || dataOrder == 'desc') {
-          order = 'asc';
-        }
-        else {
-          order = 'desc';
-        }
+        //dataOrder === 'desc' ? order = 'asc' : order = 'desc';
+        order = dataOrder === 'desc' ? 'asc' : 'desc';
         this.sort(field, order);
       }
 
@@ -150,17 +142,13 @@ export default class SortableTable {
   }
 
   getSubElements(element) {
-    const result = {};
     const elements = element.querySelectorAll('[data-element]');
 
-    for (const subElement of elements) {
-      const name = subElement.dataset.element;
+    return [...elements].reduce((accum, subElement) => {
+      accum[subElement.dataset.element] = subElement;
 
-      result[name] = subElement;
-
-    }
-
-    return result;
+      return accum;
+    }, {});
   }
 
   remove () {
